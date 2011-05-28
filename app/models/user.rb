@@ -43,6 +43,8 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
 
+  scope :admin, where(:admin => true)
+
   # Return true if the user's password matches the submitted password
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)
@@ -74,6 +76,10 @@ class User < ActiveRecord::Base
  
   def unfollow!(followed)
     relationships.find_by_followed_id(followed).destroy
+  end
+
+  def feed
+    Micropost.from_users_followed_by(self)
   end
 
   private
