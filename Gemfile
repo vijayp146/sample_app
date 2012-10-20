@@ -15,6 +15,7 @@ end
 
 group :development do
 	gem 'rspec-rails', '2.5.0'
+  gem 'capistrano'
 	gem 'annotate' 
 end
 
