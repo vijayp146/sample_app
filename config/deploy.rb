@@ -24,6 +24,28 @@ task :production do
   server 'aws.adam-ferguson.com', :app, :web, :db, :primary => true
 end
 
+namespace :deploy do
+  desc "create shared directories"
+  task :create_shared do
+    run "mkdir -p #{shared_path}/tmp/pids"
+    run "mkdir -p #{shared_path}/tmp/cache"
+    run "mkdir -p #{shared_path}/tmp/sockets"
+    run "mkdir -p #{shared_path}/tmp/sessions"
+    run "mkdir -p #{shared_path}/config"
+  end
+
+  desc "make symlinks for shared resources"
+  task :shared_symlink do
+    run "ln -nfs #{shared_path}/log #{release_path}/log"
+    run "rm -r #{release_path}/tmp"
+    run "ln -nfs #{shared_path}/tmp #{release_path}/tmp"
+    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+  end
+end
+
+after "deploy:create_symlink", "deploy:shared_symlink"
+after "deploy:setup", "deploy:create_shared"
+
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
 
