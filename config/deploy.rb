@@ -1,3 +1,5 @@
+require 'bundler/capistrano'
+
 set :application, "sample_app"
 set :repository, "git@github.com:AdamFerguson/sample_app.git"
 set :scm, :git
@@ -19,7 +21,7 @@ set :deploy_to, "/var/rails/#{application}"
 
 task :production do
   set :rails_env, "production"
-  server 'aws.adam-ferguson.com', :app, :web, :db
+  server 'aws.adam-ferguson.com', :app, :web, :db, :primary => true
 end
 
 # if you're still using the script/reaper helper you will need

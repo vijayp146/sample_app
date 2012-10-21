@@ -8,11 +8,16 @@ Server:
     2) create new config file for application in /etc/nginx/sites-available
     3) symlink config file to /etc/nginx/sites-enabled
   - Install git
+    1) sudo apt-get install git
+  - Install ruby
+    1) sudo apt-get install ruby1.9.3
+    2) sudo gem install rake
   - Install/setup db server (postgres, mysql)
+    1) sudo apt-get install postgresql #for example
     1) Create db user
   - add deploy user
-    1) sudo adduser deploy (adds both user and group as well as setting up users' home dir)
-    2) configure deploy's authorized_keys in ~/.ssh
+    1) sudo adduser deploy (adds both user and group as well as setting up users home dir)
+    2) configure deploys authorized_keys in ~/.ssh
     3) sudo mkdir /var/rails
     4) sudo chown deploy:deploy /var/rails
 
@@ -23,6 +28,8 @@ Client:
     2) Add basic configurations to deploy.rb
 
     ```
+    require 'bundler/capistrano'
+
     set :application, "app_name"
     set :repository, "git@..."
     set :scm, :git
@@ -42,6 +49,6 @@ Client:
 
     task :production do
       set :rails_env, "production"
-      server 'server_domain_goes_here', :app, :web, :db
+      server 'server_domain_goes_here', :app, :web, :db, :primary => true
     end
     ```
