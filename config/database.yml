@@ -16,6 +16,8 @@ test:
   timeout: 5000
 
 production:
+  encoding: utf8
   adapter: postgresql
   username: postgres
   password: postgres
+  database: sample_app_production
