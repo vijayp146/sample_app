@@ -14,7 +14,9 @@ Server:
   - Install/setup postgres
     1) sudo apt-get install postgresql
     2) sudo apt-get install libpq-dev
-    3) Create db user
+    3) sudo apt-get install postgresql-client
+    4) sudo -u postgres psql postgres # add a postgres user to the db
+       \password postgres             # with password postgres
   - add deploy user
     1) sudo adduser deploy (adds both user and group as well as setting up users home dir)
     2) configure deploys authorized_keys in ~/.ssh
