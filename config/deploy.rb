@@ -69,6 +69,7 @@ after "deploy:create_symlink", "deploy:shared_symlink"
 after "deploy:setup", "deploy:create_shared"
 before "deploy:migrate", "deploy:db_symlink"
 before "deploy:restart", "deploy:bundle"
+before "deploy:restart", "deploy:db_symlink"
 
 require './config/boot'
 
