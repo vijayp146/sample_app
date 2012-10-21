@@ -41,10 +41,16 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/tmp #{release_path}/tmp"
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
   end
+
+  desc "symlink to database config"
+  task :db_symlink do
+    run "if [ -d #{latest_release}/config ]; then ln -nfs #{shared_path}/config/database.yml #{latest_release}/config/database.yml; fi"
+  end
 end
 
 after "deploy:create_symlink", "deploy:shared_symlink"
 after "deploy:setup", "deploy:create_shared"
+before "deploy:migrate", "deploy:db_symlink"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
