@@ -7,6 +7,7 @@ gem 'faker', '0.3.1'
 
 group :production do
   gem 'pg'
+  gem 'unicorn'
 end
 
 group :development, :test do
