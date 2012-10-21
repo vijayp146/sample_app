@@ -25,6 +25,23 @@ task :production do
 end
 
 namespace :deploy do
+  task :start, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && bin/unicorn -Dc config/unicorn.rb -E #{rails_env}"
+  end
+
+  task :stop, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && kill -QUIT $(cat tmp/pids/unicorn.pid)"
+  end
+
+  desc "gracefully restart unicorn"
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && kill -USR2 $(cat tmp/pids/unicorn.pid)"
+  end
+
+  task :bundle do
+    run "cd #{release_path} && bundle --binstubs"
+  end
+
   desc "create shared directories"
   task :create_shared do
     run "mkdir -p #{shared_path}/tmp/pids"
@@ -51,6 +68,9 @@ end
 after "deploy:create_symlink", "deploy:shared_symlink"
 after "deploy:setup", "deploy:create_shared"
 before "deploy:migrate", "deploy:db_symlink"
+before "deploy:restart", "deploy:bundle"
+
+require './config/boot'
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts

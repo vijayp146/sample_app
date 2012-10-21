@@ -33,6 +33,15 @@ Server:
 
 Client:
 
+  - Setup unicorn
+    1) Make sure `gem unicorn` is in the Gemfile in the environment where deploy is happening
+    2) Add config/unicorn.rb file:
+
+    ```
+    
+    ```
+
+
   - Setup capistrano
     1) capify .
     2) Add basic configurations to deploy.rb
@@ -63,6 +72,23 @@ Client:
     end
 
     namespace :deploy do
+      task :start, :roles => :app, :except => { :no_release => true } do
+        run "cd #{current_path} && bin/unicorn -Dc config/unicorn.rb -E #{rails_env}"
+      end
+
+      task :stop, :roles => :app, :except => { :no_release => true } do
+        run "cd #{current_path} && kill -QUIT $(cat tmp/pids/unicorn.pid)"
+      end
+
+      desc "gracefully restart unicorn"
+      task :restart, :roles => :app, :except => { :no_release => true } do
+        run "cd #{current_path} && kill -USR2 $(cat tmp/pids/unicorn.pid)"
+      end
+
+      task :bundle do
+        run "cd #{release_path} && bundle --binstubs"
+      end
+
       desc "create shared directories"
       task :create_shared do
         run "mkdir -p #{shared_path}/tmp/pids"
@@ -89,4 +115,7 @@ Client:
     after "deploy:create_symlink", "deploy:shared_symlink"
     after "deploy:setup", "deploy:create_shared"
     before "deploy:migrate", "deploy:db_symlink"
+    before "deploy:restart", "deploy:bundle"
+
+    require './config/boot'
     ```
